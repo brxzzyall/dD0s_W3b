@@ -86,10 +86,13 @@
         function startAttack(targetURL) {
             function sendRequest(method, path) {
                 const xhr = new XMLHttpRequest();
+                const startTime = performance.now();
                 xhr.open(method, targetURL + path, true);
                 xhr.onreadystatechange = function() {
                     if (xhr.readyState === 4) {
-                        consoleOutput(`${method} ${xhr.status}: ${xhr.responseURL}`);
+                        const endTime = performance.now();
+                        const responseTime = endTime - startTime;
+                        logAttack(`[${new Date().toISOString()}] ${method} ${path} - Status: ${xhr.status} Response Time: ${responseTime.toFixed(2)}ms`);
                     }
                 };
                 xhr.send();
@@ -118,13 +121,10 @@
             }
         }
 
-        function consoleOutput(message) {
+        function logAttack(message) {
             const consoleDiv = document.getElementById('console');
             const newMessage = document.createElement('div');
             newMessage.textContent = message;
             consoleDiv.appendChild(newMessage);
             consoleDiv.scrollTop = consoleDiv.scrollHeight; // Auto-scroll to the bottom
         }
-    </script>
-</body>
-</html>
