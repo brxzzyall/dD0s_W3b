@@ -3,51 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aggressive DDoS Attack</title>
+    <title>Stealth DDoS Attack</title>
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background: #282c34;
-            color: white;
-            text-align: center;
-            padding: 50px;
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100%;
+            background: #f0f0f0;
         }
-        h1 {
-            font-size: 2.5em;
-            margin-bottom: 20px;
-        }
-        input[type="text"], button {
-            padding: 10px;
-            margin: 5px;
-            font-size: 1em;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        input[type="text"] {
+        iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            max-width: 400px;
-        }
-        button {
-            background: #61dafb;
-            color: #282c34;
-            transition: background 0.3s;
-        }
-        button:hover {
-            background: #21a1f1;
-        }
-        #status {
-            margin-top: 20px;
-            font-size: 1.2em;
-            color: red;
-        }
-        #console {
-            margin-top: 20px;
-            background: #333;
-            padding: 10px;
-            border-radius: 5px;
-            max-height: 200px;
-            overflow-y: auto;
+            height: 100%;
+            border: none;
         }
     </style>
 </head>
@@ -116,4 +87,3 @@
     </script>
 </body>
 </html>
-
