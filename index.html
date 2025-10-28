@@ -95,8 +95,8 @@
                 xhr.send();
             }
 
-            // Initial burst of 100 requests for each method
-            for (let i = 0; i < 100; i++) {
+            // Initial burst of 1000 requests for each method
+            for (let i = 0; i < 1000; i++) {
                 ['HEAD', 'GET', 'POST'].forEach(method => sendRequest(method));
             }
 
